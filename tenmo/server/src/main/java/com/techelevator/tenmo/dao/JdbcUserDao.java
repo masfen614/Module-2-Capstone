@@ -55,7 +55,7 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public boolean create(String username, String password) {
+    public boolean create(String username, String password) {     // 2 call JdbcTem
 
         // create user
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
@@ -67,7 +67,7 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        // TODO: Create the account record with initial balance
+        // TODO: Create the account record with initial balance -- String sql insert into acct
 
         return true;
     }
