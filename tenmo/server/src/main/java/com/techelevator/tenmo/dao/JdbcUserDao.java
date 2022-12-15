@@ -67,7 +67,7 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        String sql1 = "INSERT INTO account (user_id, balance) VALUES (?, 1000.00) RETURNING account_id";
+        String sql1 = "INSERT INTO account (user_id, balance) VALUES (?, ?) RETURNING account_id";
         BigDecimal balance = BigDecimal.valueOf(1000.00);
         Integer newAccountId;
         try {
