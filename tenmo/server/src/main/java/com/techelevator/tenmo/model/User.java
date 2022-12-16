@@ -21,7 +21,8 @@ public class User {
       this.activated = true;
    }
 
-   public int getId() {
+
+    public int getId() {
       return id;
    }
 

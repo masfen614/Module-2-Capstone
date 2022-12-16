@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,6 +29,17 @@ public class JdbcTransferDao implements TransferDao {
         }
         return transfer;
     }
+    @Override
+    public Transfer getTransferStatus(String transferStatus) {
+        String sql = "SELECT transfer_status FROM transfer;";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, transferStatus);
+        if (rowSet.next()){
+            return mapRowToTransfer(rowSet);
+        }
+        throw new UsernameNotFoundException("transfer " + transferStatus + " was not found.");
+    }
+
+
 
     @Override
     public List<Transfer> getAllTransfers() {
@@ -41,14 +53,15 @@ public class JdbcTransferDao implements TransferDao {
         return transfers;
     }
 
+
+
     @Override
     public Transfer createTransfer(Transfer transfer) {
         Transfer newTransfer = null;
-        String sql = "INSERT INTO transfer (transfer_id, transfer_to_acct_id, transfer_from_acct_id, " +
-                "transfer_amount, transfer_status) VALUES (?, ?, ?, ?, ?) RETURNING transfer_id";
-        Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferId(),
-                transfer.getTransferToAcctId(), transfer.getTransferFromAcctId(), transfer.getTransferAmount(),
-                transfer.getTransferStatus());
+        String sql = "INSERT INTO transfer (transfer_to_acct_id, transfer_from_acct_id, " +
+                "transfer_amount, transfer_status) VALUES (?, ?, ?, ?) RETURNING transfer_id";
+        Integer transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferToAcctId(), transfer.getTransferFromAcctId(),
+                transfer.getTransferAmount(), transfer.getTransferStatus());
         newTransfer = getTransfer(transferId);
         return newTransfer;
     }
@@ -56,7 +69,7 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public boolean updateTransfer(Transfer transfer) {
         String sql = "UPDATE transfer SET transfer_id = ?, transfer_to_acct_id = ?, transfer_from_acct_id = ?, " +
-                "transfer_amount = ?, transfer_status = ?";
+                "transfer_amount = ?, transfer_status = approved";
         boolean success = false;
         int linesReturned = jdbcTemplate.update(sql, transfer.getTransferId(), transfer.getTransferToAcctId(),
                 transfer.getTransferFromAcctId(), transfer.getTransferAmount(), transfer.getTransferStatus());
@@ -76,6 +89,9 @@ public class JdbcTransferDao implements TransferDao {
         }
         return success;
     }
+
+
+
     private Transfer mapRowToTransfer(SqlRowSet results){
         int transferId = results.getInt("transfer_id");
         int transferToAcctId = results.getInt("transfer_to_acct_id");

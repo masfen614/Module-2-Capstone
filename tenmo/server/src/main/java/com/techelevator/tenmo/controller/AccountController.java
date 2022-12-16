@@ -21,6 +21,7 @@ public class AccountController {
     @Autowired
     private UserDao userDao;
 
+
     @RequestMapping(path = "/account", method = RequestMethod.GET)
     public Account getAccountById(Principal principal) {
         int userId = userDao.findIdByUsername(principal.getName());
@@ -45,14 +46,14 @@ public class AccountController {
 //
 //    }
 
-    @PutMapping("/account/{id}")
-    public void updateAccount(@PathVariable int accountId, @RequestBody Account account) {
-        account.setAccountId(accountId);
-        boolean updated = accountDao.updateAccount(account);
-        if (!updated) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ACCOUNT NOT UPDATED!");
-        }
-    }
+//    @PutMapping("/account/{id}")
+//    public void updateAccount(@PathVariable int accountId, @RequestBody Account account) {
+//        account.setAccountId(accountId);
+//        boolean updated = accountDao.updateAccount(account);
+//        if (!updated) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ACCOUNT NOT UPDATED!");
+//        }
+//    }
 
 
 

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,20 @@ public class JdbcUserDao implements UserDao {
         }
         return users;
     }
+
+    @Override
+    public List<User> findAllOtherUsers(int userId, Principal principal) {
+        List<User> otherUsers = new ArrayList<>();
+       // Principal principal1 = userId;
+        String sql = "SELECT user_id, username FROM tenmo_user WHERE username != user_id;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+        while(results.next()) {
+            User user = mapRowToUser(results);
+            otherUsers.add(user);
+        }
+        return otherUsers;
+    }
+
 
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {

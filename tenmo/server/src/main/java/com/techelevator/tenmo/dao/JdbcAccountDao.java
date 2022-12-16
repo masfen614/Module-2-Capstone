@@ -1,8 +1,8 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.SQLErrorCodes;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
@@ -20,14 +20,24 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public Account getAccount(int userId) {
+    public Account getAccount(int accountId) {
         Account account = null;
-        String sql = "SELECT * FROM account WHERE user_id = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        String sql = "SELECT * FROM account WHERE account_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
         if (results.next()){
             account = mapRowToAccount(results);
         }
         return account;
+    }
+    @Override
+    public BigDecimal getBalanceByUserId(int userId) {
+        BigDecimal balance = new BigDecimal(0);
+        String sql = "SELECT * FROM account WHERE user_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        if (results.next()){
+            balance = mapRowToAccount(results).getBalance();
+        }
+        return balance;
     }
 
     @Override
@@ -64,6 +74,19 @@ public class JdbcAccountDao implements AccountDao {
 
         return success;
     }
+    @Override
+    public void subtractFromAccount(int senderUserId, Transfer transfer){
+        String sql = "UPDATE account SET balance = balance - ? WHERE user_id = ?";
+        jdbcTemplate.update(sql, transfer.getTransferAmount(), senderUserId);
+
+    }
+    @Override
+    public void addToAccount(Transfer transfer){
+        String sql = "UPDATE account SET balance = balance + ? WHERE user_id = ?";
+        jdbcTemplate.update(sql, transfer.getTransferAmount(), transfer.getTransferToAcctId());
+
+    }
+
 
     @Override
     public boolean deleteAccount(int accountId) {
@@ -76,6 +99,8 @@ public class JdbcAccountDao implements AccountDao {
         }
         return success;
     }
+
+
 
     private Account mapRowToAccount(SqlRowSet results){
         int accountId = results.getInt("account_id");
