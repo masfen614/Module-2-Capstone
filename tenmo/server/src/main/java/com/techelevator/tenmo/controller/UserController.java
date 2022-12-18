@@ -36,6 +36,23 @@ public class UserController {
         int userId = userDao.findIdByUsername(principal.getName());
         return userDao.findAll();
     }
+//    @RequestMapping(path = "/user", method = RequestMethod.GET)
+//    public List<User> getAllUsers(Principal principal, String getName){
+//        int userId = userDao.findAllOtherUsers(principal.getName());
+//        return userDao.findAllOtherUsers();
+//    }
 
+//    @RequestMapping(path = "/user", method = RequestMethod.GET)
+//    public List<User> getAllOtherUsers(Principal principal){
+//        String users = userDto.findAllOtherUsers.);
+//        return userDto.findAllOtherUsers;
+//    }
+
+
+//    @RequestMapping(path = "/user", method = RequestMethod.GET)
+//    public List<User> findAllOtherUsers(Principal principal){
+//        int userId = Integer.parseInt(userDto.findAllOtherUsers(principal));
+//        return userDao.findAll();
+//    }
 
 }
